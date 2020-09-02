@@ -1,0 +1,12 @@
+= Problem Fighter Spring Boot Multi Tenant
+
+
+* Connect to Default Database
+* Can Configure database credential into application.yml
+* Load Tenant database configuration from database table
+* Tenant Management API
+** Add Tenant
+** Remove Tenant
+** Suspend Tenant
+** Unsuspend Tenant
+* URL for secondary Database from url-map-to-db.yml
