@@ -21,7 +21,9 @@ group = 'com.problemfighter.pfspring.multitenant'
 version = '1.0.0'
 
 
-def dependencyList = []
+def dependencyList = [
+        "pfspring-common"
+]
 
 dependencies {
     dependencyList.each {
