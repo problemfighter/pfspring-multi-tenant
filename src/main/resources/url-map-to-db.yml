@@ -1,0 +1,7 @@
+mapping:
+  dbToUrl:
+    mysql:
+      - /api/v2/student/report
+      - /api/v2/department/*
+    elasticsearch:
+      - /api/v2/analytics/data

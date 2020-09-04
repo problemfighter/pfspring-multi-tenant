@@ -1,9 +1,9 @@
 package com.problemfighter.pfspring.multitenant.interceptor;
 
 import com.problemfighter.pfspring.common.common.Console;
+import com.problemfighter.pfspring.multitenant.config.UrlMapToDatabase;
 import com.problemfighter.pfspring.multitenant.holder.TenantIdentifierHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -14,6 +14,8 @@ import org.springframework.web.context.request.WebRequestInterceptor;
 @Component
 public class TenantIdentityInterceptor implements WebRequestInterceptor {
 
+    @Autowired
+    private UrlMapToDatabase urlMapToDatabase;
 
     @Override
     public void preHandle(WebRequest request) throws Exception {
