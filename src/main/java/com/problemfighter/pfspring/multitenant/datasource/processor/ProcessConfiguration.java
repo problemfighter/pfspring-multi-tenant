@@ -73,8 +73,25 @@ public class ProcessConfiguration {
         return sourceMap;
     }
 
+    private Map<Object, Object> getApplicationConfigRegisteredDatasource(Map<Object, Object> existingConfig) {
+        if (multiDatabaseConfig.datasources != null && !multiDatabaseConfig.datasources.isEmpty()) {
+            DataSource dataSource;
+            for (Map.Entry<String, DatasourceProperty> entry : multiDatabaseConfig.datasources.entrySet()) {
+                if (entry.getKey() != null) {
+                    dataSource = createDatasource(entry.getValue());
+                    if (dataSource != null) {
+                        existingConfig.put(entry.getKey(), dataSource);
+                        DatabaseIdentifierHolder.registeredInstance.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
+        return existingConfig;
+    }
+
     public Map<Object, Object> getAllRegisteredDatasource() {
         Map<Object, Object> sourceMap = getDatabaseRegisteredDatasource();
+        getApplicationConfigRegisteredDatasource(sourceMap);
         sourceMap.put(MTConstant.defaultKey, getDefaultDatasource());
         return sourceMap;
     }
