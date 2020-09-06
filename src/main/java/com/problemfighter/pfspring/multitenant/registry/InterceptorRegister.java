@@ -1,6 +1,6 @@
 package com.problemfighter.pfspring.multitenant.registry;
 
-import com.problemfighter.pfspring.multitenant.interceptor.TenantIdentityInterceptor;
+import com.problemfighter.pfspring.multitenant.datasource.interceptor.TenantIdentityInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

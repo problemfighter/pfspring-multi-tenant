@@ -1,10 +1,10 @@
-package com.problemfighter.pfspring.multitenant.interceptor;
+package com.problemfighter.pfspring.multitenant.datasource.interceptor;
 
 import com.problemfighter.pfspring.common.common.Console;
-import com.problemfighter.pfspring.multitenant.config.DefaultDatabaseConfig;
-import com.problemfighter.pfspring.multitenant.config.MultiDatabaseConfig;
-import com.problemfighter.pfspring.multitenant.config.UrlMapToDatabase;
-import com.problemfighter.pfspring.multitenant.holder.TenantIdentifierHolder;
+import com.problemfighter.pfspring.multitenant.datasource.config.DefaultDatabaseConfig;
+import com.problemfighter.pfspring.multitenant.datasource.config.MultiDatabaseConfig;
+import com.problemfighter.pfspring.multitenant.datasource.config.UrlMapToDatabase;
+import com.problemfighter.pfspring.multitenant.datasource.holder.DatabaseIdentifierHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
@@ -28,12 +28,12 @@ public class TenantIdentityInterceptor implements WebRequestInterceptor {
     @Override
     public void preHandle(WebRequest request) throws Exception {
         String tenant = request.getHeader("tenant");
-        Console.log(((ServletWebRequest)request).getRequest().getRequestURI());
-        if (tenant == null){
+        Console.log(((ServletWebRequest) request).getRequest().getRequestURI());
+        if (tenant == null) {
             tenant = "vw";
         }
         Console.log("-------- TenantIdentityInterceptor");
-        TenantIdentifierHolder.setTenantId(tenant);
+        DatabaseIdentifierHolder.setTenantId(tenant);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class TenantIdentityInterceptor implements WebRequestInterceptor {
 
     @Override
     public void afterCompletion(WebRequest request, Exception ex) throws Exception {
-        TenantIdentifierHolder.clear();
+        DatabaseIdentifierHolder.clear();
     }
 }

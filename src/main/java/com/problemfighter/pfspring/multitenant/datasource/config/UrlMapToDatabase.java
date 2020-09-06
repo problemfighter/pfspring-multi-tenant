@@ -1,4 +1,4 @@
-package com.problemfighter.pfspring.multitenant.config;
+package com.problemfighter.pfspring.multitenant.datasource.config;
 
 
 import com.problemfighter.pfspring.common.factory.YamlPropertySourceFactory;

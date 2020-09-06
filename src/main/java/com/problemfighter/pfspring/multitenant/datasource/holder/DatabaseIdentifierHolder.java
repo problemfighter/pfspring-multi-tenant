@@ -1,6 +1,6 @@
-package com.problemfighter.pfspring.multitenant.holder;
+package com.problemfighter.pfspring.multitenant.datasource.holder;
 
-public class TenantIdentifierHolder {
+public class DatabaseIdentifierHolder {
 
     private static ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
