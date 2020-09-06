@@ -18,6 +18,7 @@ public class DataSourceConfiguration {
     public DataSource dataSource() {
         if (processConfiguration.isMultiDatasourceEnable()) {
             MultiDatasourceRouter multiDatasourceRouter = new MultiDatasourceRouter();
+            multiDatasourceRouter.setTargetDataSources(processConfiguration.getAllRegisteredDatasource());
             return multiDatasourceRouter;
         } else {
             return processConfiguration.getDefaultDatasource();

@@ -22,7 +22,8 @@ version = '1.0.0'
 
 
 def dependencyList = [
-        "pfspring-common"
+        "pfspring-common",
+        "pf-java-object-copier",
 ]
 
 dependencies {
