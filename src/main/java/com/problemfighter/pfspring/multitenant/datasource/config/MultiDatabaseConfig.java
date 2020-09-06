@@ -14,5 +14,6 @@ public class MultiDatabaseConfig {
 
     public LinkedHashMap<String, DatasourceProperty> datasources;
     public Boolean enable = false;
+    public String dbIdentifierKey = "instance-identity";
 
 }

@@ -1,6 +1,6 @@
 package com.problemfighter.pfspring.multitenant.registry;
 
-import com.problemfighter.pfspring.multitenant.datasource.interceptor.TenantIdentityInterceptor;
+import com.problemfighter.pfspring.multitenant.datasource.interceptor.DatasourceIdentityInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -8,15 +8,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class InterceptorRegister implements WebMvcConfigurer {
 
-    private final TenantIdentityInterceptor tenantIdentityInterceptor;
+    private final DatasourceIdentityInterceptor datasourceIdentityInterceptor;
 
-    public InterceptorRegister(TenantIdentityInterceptor tenantIdentityInterceptor) {
-        this.tenantIdentityInterceptor = tenantIdentityInterceptor;
+    public InterceptorRegister(DatasourceIdentityInterceptor datasourceIdentityInterceptor) {
+        this.datasourceIdentityInterceptor = datasourceIdentityInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addWebRequestInterceptor(tenantIdentityInterceptor);
+        registry.addWebRequestInterceptor(datasourceIdentityInterceptor);
     }
 
 }

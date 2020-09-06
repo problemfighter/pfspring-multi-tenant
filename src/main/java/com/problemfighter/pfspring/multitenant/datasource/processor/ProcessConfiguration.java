@@ -12,7 +12,6 @@ import com.problemfighter.pfspring.multitenant.service.MultiDatabaseIdentityServ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
-
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +40,6 @@ public class ProcessConfiguration {
         if (datasourceProperty.driverClassName != null) {
             dataSourceBuilder.driverClassName(datasourceProperty.driverClassName);
         }
-
         return dataSourceBuilder.build();
     }
 
