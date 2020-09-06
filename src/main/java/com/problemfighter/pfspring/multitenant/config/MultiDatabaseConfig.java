@@ -9,9 +9,10 @@ import java.util.LinkedHashMap;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "tenants")
-public class TenantDatabaseConfig {
+@ConfigurationProperties(prefix = "multidatasource")
+public class MultiDatabaseConfig {
 
     public LinkedHashMap<String, DatasourceProperty> datasources;
+    public Boolean enable = false;
 
 }
