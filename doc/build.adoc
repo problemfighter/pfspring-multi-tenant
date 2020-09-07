@@ -1,0 +1,1 @@
+bash gradlew :pfspring-multi-tenant:clean && bash gradlew :pfspring-multi-tenant:build && bash gradlew :pfspring-multi-tenant:bintrayUpload
