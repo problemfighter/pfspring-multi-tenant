@@ -1,12 +1,34 @@
 = Problem Fighter Spring Boot Multi Tenant
 
 
-* Connect to Default Database
-* Can Configure database credential into application.yml
-* Load Tenant database configuration from database table
+* Connect to Default Database -- Done
+* Can Configure database credential into application.yml -- Done
+* Load Tenant database configuration from database table -- Done
+* URL for secondary Database from url-map-to-db.yml -- Done
+
+== Software as a Service (SaaS)
 * Tenant Management API
 ** Add Tenant
 ** Remove Tenant
 ** Suspend Tenant
 ** Unsuspend Tenant
-* URL for secondary Database from url-map-to-db.yml
+* Flyway Integration
+* Virtual Instance Deployment
+** Import Database
+** Configuration of static resources
+
+
+
+
+== Testing
+* Check with multi datasource off, system should perform normally
+* Enable Multi datasource
+* Try to connect with unknown datasource key
+* Add secondary datasource and check the system integrity
+* Try to connect secondary datasource by request
+* Add url mapping and check response come with that datasource
+* Try to concurrent request
+* Add datasource into database then try to connect that resource
+* Add url mapping for a database datasource and check
+* Suspend and check the response
+* Mark as deleted and check the response
