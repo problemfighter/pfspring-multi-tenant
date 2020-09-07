@@ -7,13 +7,20 @@ import com.problemfighter.pfspring.multitenant.datasource.config.DefaultDatabase
 import com.problemfighter.pfspring.multitenant.datasource.config.MultiDatabaseConfig;
 import com.problemfighter.pfspring.multitenant.datasource.data.DatasourceProperty;
 import com.problemfighter.pfspring.multitenant.datasource.holder.DatabaseIdentifierHolder;
+import com.problemfighter.pfspring.multitenant.model.entity.InstanceStatus;
 import com.problemfighter.pfspring.multitenant.model.entity.MultiDatabaseIdentity;
 import com.problemfighter.pfspring.multitenant.service.MultiDatabaseIdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -25,73 +32,71 @@ public class ProcessConfiguration {
     @Autowired
     private MultiDatabaseConfig multiDatabaseConfig;
 
-    @Autowired
-    private MultiDatabaseIdentityService multiDatabaseIdentityService;
+    private final Map<Object, Object> registeredDataSources = new LinkedHashMap<>();
 
     private DataSource createDatasource(DatasourceProperty datasourceProperty) {
-        if (datasourceProperty.url == null || datasourceProperty.username == null || datasourceProperty.password == null) {
-            return null;
-        }
-        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.url(datasourceProperty.url);
-        dataSourceBuilder.username(datasourceProperty.username);
-        dataSourceBuilder.password(datasourceProperty.password);
-
-        if (datasourceProperty.driverClassName != null) {
-            dataSourceBuilder.driverClassName(datasourceProperty.driverClassName);
-        }
-        return dataSourceBuilder.build();
+        return datasourceProperty.initializeDataSourceBuilder().build();
     }
 
-    private DatasourceProperty entityToDatasourceProperty(MultiDatabaseIdentity multiDatabaseIdentity) throws ObjectCopierException {
-        ObjectCopier objectCopier = new ObjectCopier();
-        return objectCopier.copy(multiDatabaseIdentity, DatasourceProperty.class);
+    private void registerDataSource(DatasourceProperty datasourceProperty){
+        DataSource dataSource = createDatasource(datasourceProperty);
+        if (dataSource != null) {
+            registeredDataSources.put(datasourceProperty.instanceKey, dataSource);
+            DatabaseIdentifierHolder.registeredInstance.put(datasourceProperty.instanceKey, datasourceProperty);
+        }
     }
 
-    private Map<Object, Object> getDatabaseRegisteredDatasource() {
-        Map<Object, Object> sourceMap = new LinkedHashMap<>();
+    private DatasourceProperty mapDbTableToDatasourceProperty(ResultSet resultSet) throws SQLException {
+        DatasourceProperty datasourceProperty = null;
+        if (resultSet != null) {
+            datasourceProperty = new DatasourceProperty();
+            datasourceProperty.setUrl(resultSet.getString("url"));
+            datasourceProperty.setUsername(resultSet.getString("username"));
+            datasourceProperty.setPassword(resultSet.getString("password"));
+            String driverClassName = resultSet.getString("driver_class_name");
+            if (driverClassName != null) {
+                datasourceProperty.setDriverClassName(driverClassName);
+            }
+            datasourceProperty.instanceKey = resultSet.getString("instance_key");
+            datasourceProperty.message = resultSet.getString("message");
+            datasourceProperty.instanceStatus = InstanceStatus.status(resultSet.getInt("instance_status"));
+        }
+        return datasourceProperty;
+    }
+
+
+    private void registeredAllDatasourceFromDB() {
         try {
-            Iterable<MultiDatabaseIdentity> list = multiDatabaseIdentityService.getAllDatabaseIdentities();
-            if (list != null) {
-                DataSource dataSource;
-                DatasourceProperty datasourceProperty;
-                for (MultiDatabaseIdentity multiDatabaseIdentity : list) {
-                    if (multiDatabaseIdentity.instanceKey != null) {
-                        datasourceProperty = entityToDatasourceProperty(multiDatabaseIdentity);
-                        dataSource = createDatasource(datasourceProperty);
-                        if (dataSource != null) {
-                            sourceMap.put(multiDatabaseIdentity.instanceKey, dataSource);
-                            DatabaseIdentifierHolder.registeredInstance.put(multiDatabaseIdentity.instanceKey, datasourceProperty);
-                        }
-                    }
+            Connection connection = getDefaultDatasource().getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM multi_database_identity");
+            DatasourceProperty datasourceProperty = null;
+            while (resultSet.next()) {
+                datasourceProperty = mapDbTableToDatasourceProperty(resultSet);
+                if (datasourceProperty != null) {
+                    registerDataSource(datasourceProperty);
                 }
             }
-        } catch (Exception ignore) {
+        } catch (SQLException throwables) {
+            System.out.println("Datasource Registration Error: " + throwables.getMessage());
         }
-        return sourceMap;
     }
 
-    private Map<Object, Object> getApplicationConfigRegisteredDatasource(Map<Object, Object> existingConfig) {
+    private void registeredAllDatasourceFromApplicationConfig() {
         if (multiDatabaseConfig.datasources != null && !multiDatabaseConfig.datasources.isEmpty()) {
-            DataSource dataSource;
             for (Map.Entry<String, DatasourceProperty> entry : multiDatabaseConfig.datasources.entrySet()) {
                 if (entry.getKey() != null) {
-                    dataSource = createDatasource(entry.getValue());
-                    if (dataSource != null) {
-                        existingConfig.put(entry.getKey(), dataSource);
-                        DatabaseIdentifierHolder.registeredInstance.put(entry.getKey(), entry.getValue());
-                    }
+                    entry.getValue().instanceKey = entry.getKey();
+                    registerDataSource(entry.getValue());
                 }
             }
         }
-        return existingConfig;
     }
 
     public Map<Object, Object> getAllRegisteredDatasource() {
-        Map<Object, Object> sourceMap = getDatabaseRegisteredDatasource();
-        getApplicationConfigRegisteredDatasource(sourceMap);
-        sourceMap.put(MTConstant.defaultKey, getDefaultDatasource());
-        return sourceMap;
+        registeredAllDatasourceFromDB();
+        registeredAllDatasourceFromApplicationConfig();
+        return registeredDataSources;
     }
 
     public Boolean isMultiDatasourceEnable() {

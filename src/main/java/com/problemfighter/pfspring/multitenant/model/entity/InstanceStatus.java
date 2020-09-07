@@ -10,4 +10,12 @@ public enum InstanceStatus {
     InstanceStatus(String title) {
         this.title = title;
     }
+
+    public static InstanceStatus status(Integer index) {
+        try {
+            return values()[index];
+        } catch (Exception ignore) {
+        }
+        return null;
+    }
 }
