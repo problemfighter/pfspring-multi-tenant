@@ -1,7 +1,9 @@
 mapping:
   dbToUrl:
+    secondary:
+      - /api/v1/department/list
     mysql:
-      - /api/v2/student/report
-      - /api/v2/department/*
+      - /api/v2/abc/report
+      - /api/v2/xyz/*
     elasticsearch:
       - /api/v2/analytics/data
