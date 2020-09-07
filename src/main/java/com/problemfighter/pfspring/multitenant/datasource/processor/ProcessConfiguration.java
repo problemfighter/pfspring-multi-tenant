@@ -75,6 +75,8 @@ public class ProcessConfiguration {
                     registerDataSource(datasourceProperty);
                 }
             }
+            statement.close();
+            connection.close();
         } catch (SQLException throwables) {
             System.out.println("Datasource Registration Error: " + throwables.getMessage());
         }
