@@ -1,7 +1,7 @@
 package com.problemfighter.pfspring.multitenant.datasource.config;
 
 
-import com.problemfighter.pfspring.common.factory.YamlPropertySourceFactory;
+import com.problemfighter.pfspring.multitenant.common.YamlPropertySourceFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
