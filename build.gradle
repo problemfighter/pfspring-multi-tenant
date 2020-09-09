@@ -38,6 +38,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
+bootJar { enabled = false }
+jar { enabled = true }
+
 javadoc {
     source = sourceSets.main.allJava
     classpath = configurations.compile
