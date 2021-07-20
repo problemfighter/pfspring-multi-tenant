@@ -13,9 +13,6 @@ apply plugin: 'io.spring.dependency-management'
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven { url "https://dl.bintray.com/hmtmcse/maven/" }
-    maven { url "https://dl.bintray.com/problemfighter/java/" }
 }
 
 
@@ -73,7 +70,7 @@ task javadocJar(type: Jar) {
 }
 
 
-Boolean isPublish = true
+Boolean isPublish = false
 if (isPublish) {
     bintray {
 
@@ -100,7 +97,7 @@ if (isPublish) {
                 groupId = 'com.problemfighter.pfspring.multitenant'
                 from components.java
                 artifact sourcesJar
-//                artifact javadocJar
+                artifact javadocJar
                 versionMapping {
                     usage('java-api') {
                         fromResolutionOf('runtimeClasspath')
