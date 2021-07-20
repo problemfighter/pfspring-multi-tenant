@@ -4,7 +4,6 @@ plugins {
     id 'java'
     id 'signing'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.5"
 }
 
 apply plugin: 'org.springframework.boot'
@@ -38,26 +37,6 @@ dependencies {
 bootJar { enabled = false }
 jar { enabled = true }
 
-javadoc {
-    source = sourceSets.main.allJava
-    classpath = configurations.compile
-    options.addBooleanOption('html5', true)
-}
-
-task makeDoc {
-    dependsOn(javadoc)
-    doLast {
-        def docDirectory = file("docs")
-        if (!docDirectory.exists()){
-            docDirectory.mkdirs();
-        }
-        delete "docs/javadoc"
-        copy{
-            from "$buildDir/docs/javadoc"
-            into 'docs/javadoc'
-        }
-    }
-}
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
@@ -72,25 +51,19 @@ task javadocJar(type: Jar) {
 
 Boolean isPublish = false
 if (isPublish) {
-    bintray {
-
-        user = (project.hasProperty('bintrayUser') ? project.property('bintrayUser') : "hmtmcse" )
-        key =  (project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : "123" )
-        publish = true
-        override = true
-        publications = ['mavenJava']
-        pkg {
-            repo = 'java'
-            name = 'com.problemfighter.pfspring.multitenant'
-            desc = 'Problem Fighter Spring Boot Multi Tenant'
-            vcsUrl = 'https://github.com/problemfighter/pfspring-multi-tenant.git'
-            websiteUrl = 'https://github.com/problemfighter/pfspring-multi-tenant'
-            issueTrackerUrl = 'https://github.com/problemfighter/pfspring-multi-tenant/issues'
-            licenses = ['Apache-2.0']
-        }
-    }
 
     publishing {
+
+        repositories {
+            maven {
+                credentials {
+                    username = (project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : "hmtmcse" )
+                    password = (project.hasProperty('ossrhPassword') ? project.property('ossrhPassword') : "123" )
+                }
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            }
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 artifactId = 'pfspring-multi-tenant'
